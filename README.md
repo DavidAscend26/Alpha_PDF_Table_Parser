@@ -36,3 +36,5 @@ If you have any questions or feedback, please feel free to contact me at ascendd
 
 ### Live example
 You can visit the live example on the next link: https://davidascend2023.pythonanywhere.com/
+
+![Live website example!](/assets/images/test.png "Working code test")

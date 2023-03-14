@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF Table Viewer</title>
+    <style>
+        /* Style for the title section */
+        #title-section {
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        /* Style for the file input section */
+        #file-input-section {
+            background-color: #4F4F4F;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        /* Style for the table section */
+        #table-section {
+            background-color: #D3D3D3;
+            padding: 30px;
+        }
+
+        /* Style for the table */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <div id="title-section">
+        <h1>PDF Table Viewer</h1>
+    </div>
+
+    <div id="file-input-section">
+        <h2>Upload a PDF file to be processed</h2>
+        <form action="/upload" method="POST" enctype="multipart/form-data">
+          <input type="file" name="pdf_file">
+          <input type="submit" value="Upload">
+        </form>
+    </div>
+
+    {% if table_data %}
+        <div id="table-section">
+            <h2>These are the extracted values:</h2>
+            <table>
+                <tr>
+                    <th>COVERAGES / OTHER</th>
+                    <th>LIMIT OF LIABILITY</th>
+                    <th>PREMIUMS AUTO 1</th>
+                    <th>PREMIUMS AUTO 2</th>
+                    <th>OTHER</th>
+                </tr>
+                {% for item, value in table_data.items() %}
+                    <tr>
+                        <td>{{ item }}</td>
+                        <td>{{ value[0] }}</td>
+                        <td>{{ value[1] }}</td>
+                        <td>{{ value[2] }}</td>
+                        <td>{{ value[3] }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% endif %}
+</body>
+</html>

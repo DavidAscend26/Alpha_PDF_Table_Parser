@@ -1,7 +1,4 @@
-from datetime import datetime
-
 from flask import Flask, render_template, request
-import PyPDF2
 from pdfquery import PDFQuery
 import re
 
@@ -23,12 +20,12 @@ def upload():
         'TOTAL PREMIUM': '',
         'POLICY PERIOD': '',
     }
-    #values = []
     policy_period = []
     price_pattern = r'\$\s?[\d,]+\.\d{2}'
     pattern = r"\b(?:JANUARY|FEBRUARY|MARCH|APRIL|MAY|JUNE|JULY|AUGUST|SEPTEMBER|OCTOBER|NOVEMBER|DECEMBER)\s+\d{1,2},\s+\d{4}\b"
     pdf = PDFQuery(file)
-    pdf.load(5)#Policy Period
+    # Page containing the Policy Period
+    pdf.load(5)
     # Use CSS-like selectors to locate the elements
     text_elements = pdf.pq('LTTextLineHorizontal')
     # Extract the text from the elements
@@ -39,11 +36,8 @@ def upload():
         if len(dates) > 0:
             policy_period.append(element)
     table_data['POLICY PERIOD'] = ['','','',"From: " + policy_period[0] + " to: " + policy_period[1]]
-        #dates = re.findall(testpattern, text)
-
-    pdf.load(7)  # Specific fields
-    # Use CSS-like selectors to locate the elements
-    text_elements = pdf.pq('LTTextLineHorizontal')
+    # Page containing all the important details
+    pdf.load(7)
 
     label = pdf.pq('LTTextLineHorizontal:contains("Bodily Injury")')
     left_corner = float(label.attr('x1'))
@@ -72,13 +66,10 @@ def upload():
     bottom_corner = float(other_t_c_l.attr('y0'))
     right_corner = float(other_t_c_l.attr('x1'))
     other_collision = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (right_corner, bottom_corner, right_corner + 300, bottom_corner + 12)).text()
-    #table_data.append(other_collision)
     columns = re.findall(r"AUTO \d+", other_collision)
 
     below_other = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (left_corner, bottom_corner-12, right_corner, bottom_corner)).text()
-    #table_data.append(below_other)
     prices = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (right_corner, bottom_corner-12, right_corner + 200, bottom_corner)).text()
-    #table_data.append(prices)
     price_values = re.findall(r"\$ \d+", prices)
     limit_liability = below_other + " : " + columns[0] + " (" + price_values[0] + ") " + columns[1] + " (" + price_values[1] + ")"
     premiums = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (right_corner+200, bottom_corner - 12, right_corner + 500, bottom_corner)).text()

@@ -2,8 +2,12 @@
 This is a web app that allows you to select a PDF file and is capable of reading the content of the PDF file as well as extracting specific text from a table within the PDF. It is written in Python and implemented with Flask.
 
 ## Installation
-Clone this repository to your local machine
-Install the required dependencies using pip install -r requirements.txt
+  Install PyCharm on your computer
+  Clone this repository to your local machine
+  Install the required dependencies using pip install -r requirements.txt
+Or instead use
+  pip install Flask
+  pip install pdfquery
 
 ## Usage
 Launch the application by running python app.py from the command line
@@ -16,7 +20,7 @@ Upload a PDF file and extract data from a specific table within the file
 Display the extracted table data on a web page
 
 ## Contributing
-We welcome contributions from the community. If you'd like to contribute, please follow these steps:
+I welcome contributions from the community. If you'd like to contribute, please follow these steps:
 
 ### Fork this repository
 Create a new branch for your feature or bug fix
@@ -28,4 +32,7 @@ Please refer to our contributing guidelines for more information.
 This project is licensed under the MIT License. See LICENSE for more information.
 
 ##### Contact Information
-If you have any questions or feedback, please feel free to contact us at devasc26@gmail.com
+If you have any questions or feedback, please feel free to contact me at ascenddavid@gmail.com
+
+### Live example
+You can visit the live example on the next link: https://davidascend2023.pythonanywhere.com/

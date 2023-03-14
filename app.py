@@ -24,6 +24,7 @@ def upload():
     price_pattern = r'\$\s?[\d,]+\.\d{2}'
     pattern = r"\b(?:JANUARY|FEBRUARY|MARCH|APRIL|MAY|JUNE|JULY|AUGUST|SEPTEMBER|OCTOBER|NOVEMBER|DECEMBER)\s+\d{1,2},\s+\d{4}\b"
     pdf = PDFQuery(file)
+
     # Page containing the Policy Period
     pdf.load(5)
     # Use CSS-like selectors to locate the elements
@@ -31,20 +32,24 @@ def upload():
     # Extract the text from the elements
     text = [t.text for t in text_elements]
 
+    # ---Identification and extraction of Policy Period---
     for element in text:
         dates = re.findall(pattern, element)
         if len(dates) > 0:
             policy_period.append(element)
     table_data['POLICY PERIOD'] = ['','','',"From: " + policy_period[0] + " to: " + policy_period[1]]
+
     # Page containing all the important details
     pdf.load(7)
 
+    # ---Identification and extraction of PBodily Injury---
     label = pdf.pq('LTTextLineHorizontal:contains("Bodily Injury")')
     left_corner = float(label.attr('x1'))
     bottom_corner = float(label.attr('y0'))
     bodily_injury = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (left_corner, bottom_corner, left_corner+300, bottom_corner+12)).text()
     table_data['BODILY INJURY'] = [bodily_injury, '', '', '']
 
+    # ---Identification and extraction of Total Premium---
     total = pdf.pq('LTTextLineHorizontal:contains("TOTAL PREMIUM")')
     total_premium = ""
     if len(total) == 1:
@@ -57,10 +62,12 @@ def upload():
                 total_premium = concept_value[1]
     table_data['TOTAL PREMIUM'] = ['', '', '', total_premium]
 
+    # ---Identification and extraction of Total Premium for each auto---
     total_premium_fea = pdf.pq('LTTextLineHorizontal:contains("TOTAL PREMIUM FOR EACH AUTO")')
     matches_tp = re.findall(price_pattern, total_premium_fea.text())
     table_data['TOTAL PREMIUM FOR EACH AUTO'] = ['', matches_tp[0], matches_tp[1], '']
 
+    # ---Identification and extraction of Other Than Collision Loss---
     other_t_c_l = pdf.pq('LTTextLineHorizontal:contains("Other Than Collision Loss")')
     left_corner = float(other_t_c_l.attr('x0'))
     bottom_corner = float(other_t_c_l.attr('y0'))
@@ -77,6 +84,7 @@ def upload():
     print(matches)
     table_data['OTHER THAN COLLISION'] = [limit_liability, matches[0], matches[1], '']
 
+    # ---Identification and extraction of Uninsured motorists---
     uninsured = pdf.pq('LTTextLineHorizontal:contains("C. UNINSURED MOTORISTS ")')
     left_corner = float(uninsured.attr('x1'))
     bottom_corner = float(uninsured.attr('y0'))
@@ -86,6 +94,7 @@ def upload():
     else:
         table_data['UNINSURED MOTORIST'] = ["NULL", '', '', '']
 
+    # ---Identification and extraction of Glass Coverage---
     glass = pdf.pq('LTTextLineHorizontal:contains("GLASS COVERAGE")')
     if len(glass) > 0:
         table_data['GLASS COVERAGE'] = ['', '', '', "YES"]
